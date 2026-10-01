@@ -1,0 +1,17 @@
+# the logged-in browser profile: holds your session cookies, never commit it
+.profile/
+# your receipts, photos and captures
+data/
+receipts_all.json
+receipts_inbox/
+receipts_backfill/
+promos_inbox/
+*.jpeg
+*.jpg
+*.png
+*.pdf
+# Python and OS clutter
+__pycache__/
+*.pyc
+.DS_Store
+.env
