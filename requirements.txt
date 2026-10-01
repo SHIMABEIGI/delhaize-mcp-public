@@ -1,0 +1,5 @@
+# Delhaize receipts MCP
+# mcp pinned below 2.x: server.py targets the v1 FastMCP API
+# (mcp 2.x renamed FastMCP to MCPServer and changed other APIs).
+mcp>=1.2,<2
+playwright>=1.40
