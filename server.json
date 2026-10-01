@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.SHIMABEIGI/delhaize-mcp",
+  "title": "Delhaize receipts",
+  "description": "Fetch your own Delhaize (Belgium) till receipts and weekly promotions with a headless browser.",
+  "repository": {
+    "url": "https://github.com/SHIMABEIGI/delhaize-mcp-public",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "delhaize-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DELHAIZE_DATA_DIR",
+          "description": "Folder for receipts_all.json and the saved images (default ~/.delhaize-mcp/data)",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["uv_build>=0.8,<0.20"]
+build-backend = "uv_build"
+
+[project]
+name = "delhaize-mcp"
+version = "0.1.0"
+description = "Unofficial MCP server to fetch your own Delhaize (Belgium) till receipts and weekly promotions with a headless browser. No password handling."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Shima Beigi" }]
+keywords = ["mcp", "model-context-protocol", "delhaize", "receipts", "grocery", "belgium", "playwright"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Utilities",
+]
+# mcp pinned below 2.x: the server targets the v1 FastMCP API
+dependencies = ["mcp>=1.2,<2", "playwright>=1.40"]
+
+[project.urls]
+Homepage = "https://github.com/SHIMABEIGI/delhaize-mcp-public"
+Issues = "https://github.com/SHIMABEIGI/delhaize-mcp-public/issues"
+
+[project.scripts]
+delhaize-mcp = "delhaize_mcp.server:main"
+delhaize-receipts = "delhaize_mcp.cli:main"

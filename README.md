@@ -1,5 +1,7 @@
 # delhaize-mcp
 
+<!-- mcp-name: io.github.SHIMABEIGI/delhaize-mcp -->
+
 An unofficial [Model Context Protocol](https://modelcontextprotocol.io) server that lets an AI assistant fetch your own **Delhaize (Belgium) till receipts** and this week's **promotions**, using its own headless browser, without driving your everyday browser and without ever seeing your password.
 
 > Unofficial and not affiliated with or endorsed by Delhaize. It reads only your own account, at your request, the way you would read it yourself. Check that your use fits Delhaize's terms of use, keep the request rate low, and do not use it to collect other people's data.
@@ -23,22 +25,26 @@ Receipts are identified by **(date, store, total)**, so nothing is fetched twice
 - Python 3.10+
 - A Delhaize account with receipts linked to your loyalty card
 
+## Install
+
 ```bash
-pip install -r requirements.txt
+pip install delhaize-mcp
 python3 -m playwright install chromium
 ```
+
+This gives you two commands: `delhaize-mcp` (the MCP server) and `delhaize-receipts` (the same actions from the command line).
 
 ## Set up
 
 1. **Log in once.** A browser window opens, and you sign in yourself:
 
    ```bash
-   python3 fetch_receipts.py login
+   delhaize-receipts login
    ```
 
-   The session is saved in a local `.profile/` folder beside the code. Later runs reuse it headlessly. If it lapses, run `login` again. **`.profile/` holds your session cookies: never commit or share it** (it is in `.gitignore`).
+   The session is saved in `~/.delhaize-mcp/profile` (or set `DELHAIZE_PROFILE`). Later runs reuse it headlessly. If it lapses, run `login` again. **That folder holds your session cookies: never commit or share it.**
 
-2. **Choose a data folder** (optional). By default everything is written to `./data`. Set `DELHAIZE_DATA_DIR` to use another folder. Your record of receipts is `receipts_all.json` in that folder, a JSON list such as:
+2. **Choose a data folder** (optional). By default everything is written to `~/.delhaize-mcp/data`. Set `DELHAIZE_DATA_DIR` to use another folder. Your record of receipts is `receipts_all.json` in that folder, a JSON list such as:
 
    ```json
    [{"date": "2026-08-11", "store": "Delhaize Centre", "total": 11.11, "image": "photos/2026-08-11.jpeg"}]
@@ -51,7 +57,7 @@ python3 -m playwright install chromium
    Claude Code:
 
    ```bash
-   claude mcp add delhaize-receipts -- python3 /path/to/delhaize-mcp/server.py
+   claude mcp add delhaize-receipts -- delhaize-mcp
    ```
 
    Claude Desktop (`claude_desktop_config.json`):
@@ -60,46 +66,45 @@ python3 -m playwright install chromium
    {
      "mcpServers": {
        "delhaize-receipts": {
-         "command": "python3",
-         "args": ["/path/to/delhaize-mcp/server.py"],
+         "command": "delhaize-mcp",
          "env": {"DELHAIZE_DATA_DIR": "/path/to/your/data"}
        }
      }
    }
    ```
 
-   Use the full path to the Python that has the packages installed if you have several.
+   If the app cannot find `delhaize-mcp`, use its full path (`which delhaize-mcp` shows it).
 
 ## Command line
 
 The same actions work without an assistant:
 
 ```bash
-python3 fetch_receipts.py status
-python3 fetch_receipts.py list     --months 1   # this month and last
-python3 fetch_receipts.py fetch    --months 1
-python3 fetch_receipts.py backfill --months 3
-python3 fetch_receipts.py promos
+delhaize-receipts status
+delhaize-receipts list     --months 1   # this month and last
+delhaize-receipts fetch    --months 1
+delhaize-receipts backfill --months 3
+delhaize-receipts promos
 ```
 
 ## How it works
 
-Delhaize renders each receipt as an image inside a client-side app, so the server lets the real page render in a headless Chromium (Playwright) and reads the finished page, exactly as a person would. All parsing rules (French dates, euro amounts, de-duplication, file naming) live in `delhaize_core.py`, which has no browser dependency and is fully unit-tested.
+Delhaize renders each receipt as an image inside a client-side app, so the server lets the real page render in a headless Chromium (Playwright) and reads the finished page, exactly as a person would. All parsing rules (French dates, euro amounts, de-duplication, file naming) live in `src/delhaize_mcp/core.py`, which has no browser dependency and is fully unit-tested.
 
 ## Tests
 
 No browser or network needed:
 
 ```bash
-python3 test_core.py
-python3 test_server.py
+python3 tests/test_core.py
+python3 tests/test_server.py
 ```
 
 ## Privacy
 
 - Nothing leaves your machine except the normal page requests to delhaize.be.
 - No password is read or stored. The login is a browser profile you create yourself.
-- `.profile/` and `data/` are git-ignored. Keep it that way.
+- Your login and data live in `~/.delhaize-mcp`, outside the code, so they never end up in a repository.
 
 ## Limitations
 
